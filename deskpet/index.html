@@ -4,106 +4,227 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DeskPet — a pixel cat for your desktop</title>
-<meta name="description" content="A tiny pixel cat that lives on your macOS desktop: follows your cursor, reacts to typing, runs stretch/water reminders, Pomodoro, and celebrates when your AI IDE finishes." />
+<meta name="description" content="A tiny pixel cat that lives on your Mac: watches your cursor, taps along as you type, nudges you to stretch & sip water, runs Pomodoro, and cheers when your AI coding agent finishes." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&family=Silkscreen&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#fff3e0; --bg2:#ffd9a8; --ink:#3a302c; --accent:#5b6cff; --card:#fffaf2; }
-  * { box-sizing: border-box; }
-  body { margin:0; font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    color:var(--ink); background:linear-gradient(160deg,var(--bg),var(--bg2)); min-height:100vh; }
-  .wrap { max-width:680px; margin:0 auto; padding:56px 20px 80px; text-align:center; }
-  img.icon { width:128px; height:128px; image-rendering:pixelated; border-radius:28px;
-    box-shadow:0 10px 30px rgba(0,0,0,.15); }
-  h1 { font-size:40px; margin:18px 0 6px; }
-  .tag { font-size:18px; color:#6b5d52; margin:0 0 28px; }
-  .ver { font-size:13px; color:#8a7d70; margin-bottom:24px; }
-  .dl { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:14px; }
-  a.btn { text-decoration:none; background:var(--accent); color:#fff; padding:14px 22px;
-    border-radius:12px; font-weight:600; font-size:16px; box-shadow:0 6px 16px rgba(91,108,255,.35);
-    transition:transform .08s; }
-  a.btn:hover { transform:translateY(-2px); }
-  a.btn small { display:block; font-weight:400; font-size:12px; opacity:.85; }
-  a.btn.alt { background:#fff; color:var(--accent); border:1px solid var(--accent); box-shadow:none; }
-  .note { font-size:13px; color:#8a7d70; }
-  .card { background:var(--card); border:1px solid #f0e3d2; border-radius:16px; padding:22px 24px;
-    margin:34px 0; text-align:left; }
-  .card h2 { font-size:18px; margin:0 0 12px; }
-  ol { margin:0; padding-left:20px; } li { margin:7px 0; }
-  code { background:#f3e9da; padding:2px 7px; border-radius:6px; font-size:13px;
-    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
-  pre { background:#2c2c31; color:#eee; padding:12px 14px; border-radius:10px; overflow:auto;
-    font-size:13px; }
-  .feat { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:22px 0; }
-  .feat span { background:#fff; border:1px solid #f0e3d2; border-radius:20px; padding:6px 14px; font-size:14px; }
-  footer { font-size:13px; color:#9b8e80; margin-top:40px; }
-  footer a { color:var(--accent); }
+  :root{
+    --cream:#fff5e6; --cream2:#ffe6c0; --paper:#fffaf1;
+    --ink:#3b2f27; --muted:#9a8775;
+    --coral:#ff7a59; --coral-d:#e85f3d;
+    --mint:#8ad6bf; --sky:#bfe2ff; --pink:#ffc6d6; --butter:#ffd76b;
+    --key:#fffdf6; --key-edge:#e4d8bf; --key-shadow:#c9bb9c;
+    --line:#efe2cc;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; color:var(--ink);
+    font-family:"Nunito",sans-serif; font-weight:600;
+    background:
+      radial-gradient(1100px 500px at 80% -10%, #fff 0%, transparent 60%),
+      radial-gradient(900px 600px at -10% 20%, #ffeede 0%, transparent 55%),
+      linear-gradient(165deg, var(--cream), var(--cream2));
+    background-attachment:fixed;
+    overflow-x:hidden;
+  }
+  /* subtle grain */
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:9; opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  /* floating pixel confetti */
+  .floaty{position:fixed; z-index:0; image-rendering:pixelated; opacity:.5; animation:drift 14s ease-in-out infinite}
+  @keyframes drift{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-26px) rotate(8deg)}}
+
+  .wrap{max-width:1000px; margin:0 auto; padding:0 22px; position:relative; z-index:1}
+
+  /* nav */
+  nav{display:flex; align-items:center; justify-content:space-between; padding:22px 0}
+  .brand{display:flex; align-items:center; gap:10px; font-family:"Fredoka",sans-serif; font-weight:700; font-size:20px}
+  .brand .logo{width:34px; height:34px; image-rendering:pixelated; border-radius:9px; box-shadow:0 3px 0 var(--key-shadow)}
+  nav a.gh{font-family:"Silkscreen",monospace; font-size:11px; text-decoration:none; color:var(--ink);
+    background:var(--paper); border:2px solid var(--ink); border-radius:10px; padding:8px 12px; box-shadow:3px 3px 0 var(--ink); transition:.12s}
+  nav a.gh:hover{transform:translate(1px,1px); box-shadow:2px 2px 0 var(--ink)}
+
+  /* hero */
+  .hero{text-align:center; padding:30px 0 18px}
+  .badge{font-family:"Silkscreen",monospace; font-size:11px; color:var(--coral-d);
+    background:#fff; border:2px dashed var(--coral); border-radius:999px; padding:6px 14px; display:inline-block; margin-bottom:22px}
+  .stage{position:relative; width:230px; height:230px; margin:6px auto 4px}
+  .cat{width:184px; height:184px; image-rendering:pixelated; position:absolute; left:50%; bottom:18px; transform:translateX(-50%);
+    border-radius:38px; box-shadow:0 18px 0 -6px rgba(180,150,110,.25), 0 26px 40px rgba(150,110,70,.28);
+    animation:bob 2.6s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-12px)}}
+  .shadow{position:absolute; left:50%; bottom:8px; width:150px; height:22px; transform:translateX(-50%);
+    background:rgba(150,110,70,.22); border-radius:50%; filter:blur(5px); animation:sh 2.6s ease-in-out infinite}
+  @keyframes sh{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(.82); opacity:.7}}
+  .speech{position:absolute; top:-6px; left:calc(50% + 60px); transform:translateX(-50%);
+    background:#fff; border:2px solid var(--ink); border-radius:14px; padding:7px 12px; font-weight:800; font-size:14px;
+    white-space:nowrap; box-shadow:3px 3px 0 var(--ink); animation:pop .35s ease}
+  .speech::after{content:""; position:absolute; left:24px; bottom:-9px; width:12px; height:12px; background:#fff;
+    border-right:2px solid var(--ink); border-bottom:2px solid var(--ink); transform:rotate(45deg)}
+  @keyframes pop{0%{transform:translateX(-50%) scale(.6); opacity:0}60%{transform:translateX(-50%) scale(1.08)}100%{transform:translateX(-50%) scale(1); opacity:1}}
+
+  h1{font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(38px,7vw,68px); line-height:1.02;
+    margin:14px 0 10px; letter-spacing:-.01em}
+  h1 .hl{color:var(--coral); position:relative; white-space:nowrap}
+  h1 .hl::after{content:""; position:absolute; left:0; right:0; bottom:6px; height:12px; background:var(--butter); z-index:-1; border-radius:4px; transform:rotate(-1deg)}
+  .sub{font-size:clamp(16px,2.4vw,20px); color:var(--muted); font-weight:700; max-width:560px; margin:0 auto 8px}
+  .ver{font-family:"Silkscreen",monospace; font-size:11px; color:var(--muted); margin:14px 0 26px}
+
+  /* download = keycaps the cat taps */
+  .keys{display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-bottom:10px}
+  a.key{position:relative; text-decoration:none; min-width:210px; padding:16px 22px 20px;
+    background:var(--key); border:3px solid var(--ink); border-radius:16px;
+    box-shadow:0 7px 0 var(--key-shadow), 0 9px 0 var(--ink); transition:.1s; text-align:left}
+  a.key:hover{transform:translateY(3px); box-shadow:0 4px 0 var(--key-shadow),0 6px 0 var(--ink)}
+  a.key:active{transform:translateY(7px); box-shadow:0 0 0 var(--key-shadow),0 1px 0 var(--ink)}
+  a.key .k{display:block; font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; color:var(--ink)}
+  a.key .s{display:block; font-size:13px; color:var(--muted); font-weight:700; margin-top:2px}
+  a.key .chip{position:absolute; top:-12px; right:14px; font-family:"Silkscreen",monospace; font-size:9px; color:#fff;
+    background:var(--coral); border:2px solid var(--ink); border-radius:8px; padding:3px 7px; box-shadow:2px 2px 0 var(--ink)}
+  a.key.intel{background:#f4ecdb}
+  .free{font-family:"Silkscreen",monospace; font-size:11px; color:var(--mint); filter:saturate(1.4) brightness(.7); margin-top:14px}
+  .free b{color:var(--coral-d)}
+
+  /* features */
+  section{padding:54px 0}
+  .eyebrow{font-family:"Silkscreen",monospace; font-size:11px; color:var(--coral-d); text-align:center; margin-bottom:8px; letter-spacing:.04em}
+  h2{font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(26px,4vw,40px); text-align:center; margin:0 0 34px}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px}
+  .card{background:var(--paper); border:3px solid var(--ink); border-radius:18px; padding:22px;
+    box-shadow:5px 6px 0 var(--ink); transition:.14s}
+  .card:nth-child(2n){transform:rotate(-1deg)} .card:nth-child(3n){transform:rotate(1deg)}
+  .card:hover{transform:translateY(-5px) rotate(0); box-shadow:7px 9px 0 var(--ink)}
+  .card .ic{width:54px; height:54px; display:grid; place-items:center; font-size:28px; border-radius:14px; border:2.5px solid var(--ink); margin-bottom:14px; box-shadow:3px 3px 0 var(--ink)}
+  .card:nth-child(1) .ic{background:var(--sky)} .card:nth-child(2) .ic{background:var(--pink)}
+  .card:nth-child(3) .ic{background:var(--mint)} .card:nth-child(4) .ic{background:var(--butter)}
+  .card:nth-child(5) .ic{background:var(--coral)} .card:nth-child(6) .ic{background:#d9c6ff}
+  .card h3{font-family:"Fredoka",sans-serif; font-weight:600; font-size:19px; margin:0 0 6px}
+  .card p{margin:0; font-size:15px; color:var(--muted); font-weight:600; line-height:1.5}
+
+  /* install */
+  .install{max-width:720px; margin:0 auto; background:var(--paper); border:3px solid var(--ink); border-radius:22px;
+    box-shadow:7px 9px 0 var(--ink); padding:30px 30px 26px}
+  .step{display:flex; gap:16px; align-items:flex-start; padding:14px 0; border-bottom:2px dashed var(--line)}
+  .step:last-child{border-bottom:0}
+  .num{flex:0 0 auto; width:36px; height:36px; border-radius:50%; background:var(--coral); color:#fff;
+    border:2.5px solid var(--ink); display:grid; place-items:center; font-family:"Fredoka",sans-serif; font-weight:700; box-shadow:2px 2px 0 var(--ink)}
+  .step .t{font-size:15.5px; font-weight:700}
+  .step .t b{font-weight:900}
+  code{font-family:"Silkscreen",monospace; font-size:11.5px; background:var(--ink); color:#ffe9c9; padding:10px 12px;
+    border-radius:10px; display:inline-block; margin-top:8px; overflow-x:auto; max-width:100%}
+  .muted{color:var(--muted); font-weight:600; font-size:13px}
+
+  footer{text-align:center; padding:46px 0 64px; color:var(--muted); font-weight:700; font-size:13px}
+  footer a{color:var(--coral-d)}
+  .paws{font-size:18px; letter-spacing:6px; margin-bottom:10px}
+
+  /* load-in */
+  .rise{opacity:0; transform:translateY(16px); animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1; transform:none}}
+  .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.25s}.d4{animation-delay:.35s}.d5{animation-delay:.45s}
+  @media (max-width:560px){ a.key{min-width:0; width:100%} }
 </style>
 </head>
 <body>
+  <img class="floaty" src="icon.png" style="width:38px;top:140px;left:6%" alt="">
+  <img class="floaty" src="icon.png" style="width:26px;top:420px;right:7%;animation-delay:-4s" alt="">
+  <img class="floaty" src="icon.png" style="width:30px;top:760px;left:9%;animation-delay:-8s" alt="">
+
   <div class="wrap">
-    <img class="icon" src="icon.png" alt="DeskPet icon" onerror="this.style.display='none'" />
-    <h1>DeskPet</h1>
-    <p class="tag">A tiny pixel cat that lives on your Mac desktop.</p>
-    <p class="ver" id="ver">Loading latest release…</p>
+    <nav class="rise d1">
+      <div class="brand"><img class="logo" src="icon.png" alt="" onerror="this.style.display='none'">DeskPet</div>
+      <a class="gh" id="ghlink" href="#" target="_blank" rel="noopener">★ GitHub</a>
+    </nav>
 
-    <div class="dl" id="downloads">
-      <a class="btn" id="dl-arm" href="#">Download <small>Apple Silicon (M1–M4)</small></a>
-      <a class="btn alt" id="dl-intel" href="#">Download <small>Intel Mac</small></a>
-    </div>
-    <p class="note">Unsigned build — first launch needs a one-time Gatekeeper step (below).</p>
+    <header class="hero">
+      <span class="badge rise d1">a lil&apos; pixel buddy for your Mac</span>
+      <div class="stage rise d2">
+        <div class="speech" id="speech">✅ task done!</div>
+        <div class="shadow"></div>
+        <img class="cat" src="icon.png" alt="DeskPet pixel cat" onerror="this.parentNode.style.display='none'">
+      </div>
+      <h1 class="rise d3">A pixel cat that <br><span class="hl">lives on your desktop.</span></h1>
+      <p class="sub rise d3">Watches your cursor, taps along while you type, reminds you to stretch &amp; sip water,
+        runs Pomodoro, and hops when your AI agent finishes. 🐾</p>
+      <p class="ver rise d4" id="ver">checking latest release…</p>
 
-    <div class="feat">
-      <span>👀 Follows your cursor</span><span>⌨️ Reacts to typing</span>
-      <span>🧘 Stretch & 💧 water reminders</span><span>🍅 Pomodoro</span>
-      <span>✅ Jumps when your AI IDE finishes</span><span>🎨 Custom color & markings</span>
-    </div>
+      <div class="keys rise d4">
+        <a class="key" id="dl-arm" href="#">
+          <span class="chip">recommended</span>
+          <span class="k">↓ Apple Silicon</span>
+          <span class="s">M1 · M2 · M3 · M4 — .dmg</span>
+        </a>
+        <a class="key intel" id="dl-intel" href="#">
+          <span class="k">↓ Intel Mac</span>
+          <span class="s">older Macs — .dmg</span>
+        </a>
+      </div>
+      <p class="free rise d5"><b>Free</b> &amp; open · unsigned build (one-time Gatekeeper step below) · macOS 11+</p>
+    </header>
 
-    <div class="card">
-      <h2>Install</h2>
-      <ol>
-        <li>Open the <code>.dmg</code> → drag <b>DeskPet</b> to <b>Applications</b>.</li>
-        <li>First launch is blocked (unsigned). In <b>Terminal</b>, run:
-          <pre>xattr -dr com.apple.quarantine /Applications/DeskPet.app</pre>
-          then double-click DeskPet. (Or right-click → Open if you only see "unidentified developer".)</li>
-        <li>Lives in the <b>menubar</b> 🐾. For typing/scroll reactions: System Settings →
-          Privacy &amp; Security → <b>Accessibility</b> → enable DeskPet → relaunch.</li>
-      </ol>
-    </div>
+    <section>
+      <div class="eyebrow rise">things it does</div>
+      <h2 class="rise">small cat, big personality</h2>
+      <div class="grid">
+        <div class="card"><div class="ic">👀</div><h3>Follows your cursor</h3><p>Its eyes track your mouse. Flick fast and it scampers after the pointer.</p></div>
+        <div class="card"><div class="ic">⌨️</div><h3>Types with you</h3><p>Taps two little keys as you type. Go too fast and it overheats — steam and all.</p></div>
+        <div class="card"><div class="ic">🧘</div><h3>Stretch &amp; water</h3><p>Walks to center, does a stretch or laps from a bowl, then trots back. Gentle nudges.</p></div>
+        <div class="card"><div class="ic">🍅</div><h3>Pomodoro</h3><p>A live countdown floats over its head while you focus. Tomato for work, coffee for breaks.</p></div>
+        <div class="card"><div class="ic">✅</div><h3>Cheers your AI agent</h3><p>Jumps with “task done” when Cursor, Claude Code or Antigravity finishes a response.</p></div>
+        <div class="card"><div class="ic">🎨</div><h3>Make it yours</h3><p>Pick the coat color and markings — tabby, tuxedo, calico, mittens. Pin it in place too.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow rise">two minutes</div>
+      <h2 class="rise">getting it home</h2>
+      <div class="install rise">
+        <div class="step"><div class="num">1</div><div class="t">Open the <b>.dmg</b> and drag <b>DeskPet</b> into <b>Applications</b>.</div></div>
+        <div class="step"><div class="num">2</div><div class="t">Unsigned build — clear the quarantine flag once in <b>Terminal</b>:
+          <br><code>xattr -dr com.apple.quarantine /Applications/DeskPet.app</code>
+          <br><span class="muted">…then double-click. (Or right-click → Open if you only see “unidentified developer”.)</span></div></div>
+        <div class="step"><div class="num">3</div><div class="t">Lives in the <b>menubar</b> 🐾. For typing reactions: System Settings → Privacy &amp; Security → <b>Accessibility</b> → enable DeskPet → relaunch.</div></div>
+      </div>
+    </section>
 
     <footer>
-      Made with 🐾 · <a id="releases" href="#">All releases</a><br/>
-      Not affiliated with Apple. macOS 11+.
+      <div class="paws">🐾 🐾 🐾</div>
+      made with love for distractible developers · <a id="releases" href="#" target="_blank" rel="noopener">all releases</a><br>
+      not affiliated with Apple · inspired by the desktop-pet classics
     </footer>
   </div>
 
 <script>
-  // Public repo hosting this page + the dmg releases (source repo stays private).
-  const OWNER = 'notsahill', REPO = 'projects';
-  const relUrl = `https://github.com/${OWNER}/${REPO}/releases`;
-  document.getElementById('releases').href = relUrl;
+  const OWNER='notsahill', REPO='deployed.github.io';
+  const relUrl=`https://github.com/${OWNER}/${REPO}/releases`;
+  document.getElementById('releases').href=relUrl;
+  document.getElementById('ghlink').href=relUrl;
 
-  function fallback() {
-    // if API fails (rate limit etc.) point buttons at "latest release" page
-    document.getElementById('ver').textContent = 'Latest release';
-    document.getElementById('dl-arm').href = relUrl + '/latest';
-    document.getElementById('dl-intel').href = relUrl + '/latest';
+  // cycling speech bubble
+  const lines=['✅ task done!','🧘 stretch!','💧 drink water','🍅 24:59','purr~ 💕','⌨️ tap tap'];
+  let li=0; const sp=document.getElementById('speech');
+  setInterval(()=>{ li=(li+1)%lines.length; sp.textContent=lines[li];
+    sp.style.animation='none'; void sp.offsetWidth; sp.style.animation='pop .35s ease'; }, 2400);
+
+  function fallback(){
+    document.getElementById('ver').textContent='latest release';
+    document.getElementById('dl-arm').href=relUrl+'/latest';
+    document.getElementById('dl-intel').href=relUrl+'/latest';
   }
-
   fetch(`https://api.github.com/repos/${OWNER}/${REPO}/releases/latest`)
-    .then(r => r.ok ? r.json() : Promise.reject(r.status))
-    .then(rel => {
-      document.getElementById('ver').textContent = 'Version ' + (rel.tag_name || '') +
-        ' · ' + new Date(rel.published_at).toLocaleDateString();
-      const dmgs = (rel.assets || []).filter(a => a.name.endsWith('.dmg'));
-      const arm = dmgs.find(a => /arm64/i.test(a.name));
-      const intel = dmgs.find(a => !/arm64/i.test(a.name));
-      const set = (id, asset) => {
-        const el = document.getElementById(id);
-        if (asset) el.href = asset.browser_download_url;
-        else { el.style.opacity = .5; el.removeAttribute('href'); }
-      };
-      set('dl-arm', arm); set('dl-intel', intel);
-    })
-    .catch(fallback);
+    .then(r=>r.ok?r.json():Promise.reject(r.status))
+    .then(rel=>{
+      const d=new Date(rel.published_at);
+      document.getElementById('ver').textContent=`${rel.tag_name} · ${d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})}`;
+      const dmgs=(rel.assets||[]).filter(a=>a.name.endsWith('.dmg'));
+      const arm=dmgs.find(a=>/arm64/i.test(a.name)), intel=dmgs.find(a=>!/arm64/i.test(a.name));
+      const set=(id,a)=>{const el=document.getElementById(id); if(a){el.href=a.browser_download_url;} else {el.style.opacity=.45; el.removeAttribute('href');}};
+      set('dl-arm',arm); set('dl-intel',intel);
+    }).catch(fallback);
 </script>
 </body>
 </html>
