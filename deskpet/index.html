@@ -86,6 +86,7 @@
   a.key .chip{position:absolute; top:-12px; right:14px; font-family:"Silkscreen",monospace; font-size:9px; color:#fff;
     background:var(--coral); border:2px solid var(--ink); border-radius:8px; padding:3px 7px; box-shadow:2px 2px 0 var(--ink)}
   a.key.intel{background:#f4ecdb}
+  a.key.win{background:#e4f1ff}
   .free{font-family:"Silkscreen",monospace; font-size:11px; color:var(--mint); filter:saturate(1.4) brightness(.7); margin-top:14px}
   .free b{color:var(--coral-d)}
 
@@ -162,6 +163,10 @@
           <span class="k">↓ Intel Mac</span>
           <span class="s">older Macs — .dmg</span>
         </a>
+        <a class="key win" id="dl-win" href="#">
+          <span class="k">↓ Windows</span>
+          <span class="s">Windows 10/11 — .exe</span>
+        </a>
       </div>
       <p class="free rise d5"><b>Free</b> &amp; open · unsigned build (one-time Gatekeeper step below) · macOS 11+</p>
     </header>
@@ -188,6 +193,7 @@
           <br><code>xattr -dr com.apple.quarantine /Applications/DeskPet.app</code>
           <br><span class="muted">…then double-click. (Or right-click → Open if you only see “unidentified developer”.)</span></div></div>
         <div class="step"><div class="num">3</div><div class="t">Lives in the <b>menubar</b> 🐾. For typing reactions: System Settings → Privacy &amp; Security → <b>Accessibility</b> → enable DeskPet → relaunch.</div></div>
+        <div class="step"><div class="num">⊞</div><div class="t"><b>Windows:</b> run the <b>.exe</b> installer. If SmartScreen warns, click <b>More info → Run anyway</b>. Typing reactions work with no extra permission. Lives in the system tray 🐾.</div></div>
       </div>
     </section>
 
@@ -212,18 +218,19 @@
 
   function fallback(){
     document.getElementById('ver').textContent='latest release';
-    document.getElementById('dl-arm').href=relUrl+'/latest';
-    document.getElementById('dl-intel').href=relUrl+'/latest';
+    ['dl-arm','dl-intel','dl-win'].forEach(id=>{const e=document.getElementById(id); if(e)e.href=relUrl+'/latest';});
   }
   fetch(`https://api.github.com/repos/${OWNER}/${REPO}/releases/latest`)
     .then(r=>r.ok?r.json():Promise.reject(r.status))
     .then(rel=>{
       const d=new Date(rel.published_at);
       document.getElementById('ver').textContent=`${rel.tag_name} · ${d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})}`;
-      const dmgs=(rel.assets||[]).filter(a=>a.name.endsWith('.dmg'));
+      const assets=rel.assets||[];
+      const dmgs=assets.filter(a=>a.name.endsWith('.dmg'));
       const arm=dmgs.find(a=>/arm64/i.test(a.name)), intel=dmgs.find(a=>!/arm64/i.test(a.name));
-      const set=(id,a)=>{const el=document.getElementById(id); if(a){el.href=a.browser_download_url;} else {el.style.opacity=.45; el.removeAttribute('href');}};
-      set('dl-arm',arm); set('dl-intel',intel);
+      const win=assets.find(a=>a.name.endsWith('.exe'));
+      const set=(id,a)=>{const el=document.getElementById(id); if(!el)return; if(a){el.href=a.browser_download_url;} else {el.style.opacity=.45; el.removeAttribute('href');}};
+      set('dl-arm',arm); set('dl-intel',intel); set('dl-win',win);
     }).catch(fallback);
 </script>
 </body>
