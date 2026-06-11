@@ -230,7 +230,7 @@
             <span class="bartitle">your desktop</span></div>
           <div class="speech" id="speech">hi! move your mouse 👀</div>
           <div class="floorline"></div>
-          <canvas id="petCanvas" width="190" height="220"></canvas>
+          <canvas id="petCanvas" width="240" height="210"></canvas>
         </div>
         <div class="swatches" id="swatches"></div>
         <p class="hint">this is the real pet · it watches your cursor · type something · click it!</p>
@@ -423,37 +423,52 @@
   document.querySelectorAll('.card').forEach(c=>io.observe(c));
 
   // ---------- THE LIVE PET (real sprite from the app) ----------
-  // zone chars: C coat · S stripe · F face · G paws · W belly · B outline · E eye · N nose · R inner-ear
-  const BODY=[
-    '.....BB......BB....','....BCCB....BCCB...','....BCRB....BCRB...','...BCCCBBBBBBCCCB..',
-    '..BCCCCCCCCCCCCCCB.','.BCCCCCCCCCCCCCCCCB','.BCCCCCCCCCCCCCCCCB','.BCCCCCCCCCCCCCCCCB',
-    '.BCCEECCCCCCCEECCB.','BBCCEECCCCCCCEECCBB','.BCCCCCCNNCCCCCCCB.','BBCCCCCBNNBCCCCCCBB',
-    '.BCCCCCCCCCCCCCCCB.','..BCCCCCCCCCCCCCB..','..BBCCCCCCCCCCBB...','...BCCWWWWWWCCB....',
-    '..BCCWWWWWWWWCCB...','..BCSWWWWWWWWSCB...','..BCSWWWWWWWWSCB...','..BCCWWWWWWWWCCB...'
+  // comnyang-style silhouette — zone chars: C coat · S stripes/tail · W chest · G paws · E eye-white
+  // (S/W/G match the coat → flat look, same as the app default)
+  const SIT_TOP=[
+    '.....C............C.....','....CCC..........CCC....','....CCCC........CCCC....',
+    '....CCCCCCSCSCSCCCCC....','...CCCCCCCSCSCSCCCCCC...','..CCCCCCCCCCCCCCCCCCCC..',
+    '..CCCCCEECCCCCCEECCCCC..','CCCCCCEEEECCCCEEEECCCCCC','..CCCCEEEECCCCEEEECCCC..',
+    'CCCCCCCEECCCCCCEECCCCCCC','..CCCCCCCCCCCCCCCCCCCC..','...CCCCCCCCCCCCCCCCCC...',
+    '.....CCCCCCCCCCCCCC.....','......CCCCCCCCCCCC......'
   ];
-  const BODY_B=BODY.slice(); BODY_B[0]='.....BB......B.....'; // ear twitch
-  const PAW_BOTH=['...BGGB..BGGB.....','....BB....BB......'];
-  const PAW_LU=['...BGGB...........','.........BGGB.....'];
-  const PAW_RU=['.........BGGB.....','...BGGB...........'];
-  const FRAMES={ idle:[BODY.concat(PAW_BOTH),BODY_B.concat(PAW_BOTH)], type:[BODY.concat(PAW_LU),BODY.concat(PAW_RU)] };
-  const EYES=[{x:4,y:8,w:2,h:2},{x:13,y:8,w:2,h:2}];
+  const SIT_BODY_A=[
+    '......CCCCCCCCCCCC....SS','......CCCCCCCCCCCC...SS.','.....CCCCWWWWWWCCCC..SS.',
+    '.....CCCCWWWWWWCCCC..SS.','....CCCCCCWWWWCCCCCC.SS.','...CCCCCCCCCCCCCCCCCCCC.'
+  ];
+  const SIT_BODY_B=[
+    '......CCCCCCCCCCCC......','......CCCCCCCCCCCC..SS..','.....CCCCWWWWWWCCCC.SS..',
+    '.....CCCCWWWWWWCCCC..SS.','....CCCCCCWWWWCCCCCC.SS.','...CCCCCCCCCCCCCCCCCCCC.'
+  ];
+  const SIT_TOP_B=SIT_TOP.slice(); // ear twitch
+  SIT_TOP_B[0]='.....C..................'; SIT_TOP_B[1]='....CCC...........CC....';
+  const PAWS='...CCCCC.GGGGGG.CCCCC...';
+  const TYPE_LU=['...CCCCCCGGGCCCCCCCCCCC.','...CCCCC....GGG.CCCCC...'];
+  const TYPE_RU=['...CCCCCCCCCGGGCCCCCCCC.','...CCCCC.GGG....CCCCC...'];
+  const FRAMES={
+    idle:[SIT_TOP.concat(SIT_BODY_A,[PAWS]),SIT_TOP_B.concat(SIT_BODY_B,[PAWS])],
+    type:[SIT_TOP.concat(SIT_BODY_A.slice(0,5),TYPE_LU),SIT_TOP.concat(SIT_BODY_A.slice(0,5),TYPE_RU)]
+  };
+  const EYES=[{x:6,y:6,w:4,h:4},{x:14,y:6,w:4,h:4}];
 
   const mix=(a,b,t)=>{const h=x=>parseInt(x,16);const A=[h(a.slice(1,3)),h(a.slice(3,5)),h(a.slice(5,7))],B=[h(b.slice(1,3)),h(b.slice(3,5)),h(b.slice(5,7))];
     return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('');};
-  function palette(coat){
-    return {'.':null,B:'#3a302c',C:coat,S:mix(coat,'#000000',.3),F:coat,G:coat,W:mix(coat,'#ffffff',.62),E:'#fffefb',N:'#d98aa0',R:'#e7a6b4'};
+  function palette(look){
+    if(look==='tuxedo') return {'.':null,C:'#2c2c2c',S:'#2c2c2c',W:'#fcfbf2',G:'#fcfbf2',E:'#fffefb'};
+    return {'.':null,C:look,S:look,W:look,G:look,E:'#fffefb'};
   }
-  const COLORS=['#e0a060','#2f261d','#9a9aa2','#d9c8a8','#c96f4a'];
+  const COLORS=['tuxedo','#2e2a28','#e0a060','#9a9aa2','#d9c8a8'];
   let coat=COLORS[0], pal=palette(coat);
 
   // swatches
   const swBox=document.getElementById('swatches');
-  COLORS.forEach((c,i)=>{ const d=document.createElement('div'); d.className='sw'+(i===0?' on':''); d.style.background=c;
+  COLORS.forEach((c,i)=>{ const d=document.createElement('div'); d.className='sw'+(i===0?' on':'');
+    d.style.background=c==='tuxedo'?'linear-gradient(135deg,#2c2c2c 55%,#fcfbf2 55%)':c;
     d.onclick=()=>{ coat=c; pal=palette(c); document.querySelectorAll('.sw').forEach(s=>s.classList.remove('on')); d.classList.add('on'); say('ooh, new look! 🎨'); };
     swBox.appendChild(d); });
 
   const cv=document.getElementById('petCanvas'), cx2=cv.getContext('2d');
-  const PX=10, GW=19, GH=22;
+  const PX=10, GW=24, GH=21;
   cv.width=GW*PX; cv.height=GH*PX;
   let mouse={x:innerWidth/2,y:innerHeight/2};
   addEventListener('mousemove',e=>{mouse={x:e.clientX,y:e.clientY};});
@@ -492,10 +507,10 @@
       const exс=r.left+(e.x+e.w/2)*PX*(r.width/cv.width), eyc=r.top+(e.y+e.h/2)*PX*(r.height/cv.height);
       const dx=Math.max(-1,Math.min(1,(mouse.x-exс)/160)), dy=Math.max(-1,Math.min(1,(mouse.y-eyc)/160));
       if(now<blinkUntil){ cx2.fillStyle=pal.C; cx2.fillRect(e.x*PX,e.y*PX,e.w*PX,e.h*PX);
-        cx2.fillStyle=pal.B; cx2.fillRect(e.x*PX,(e.y+1)*PX-2,e.w*PX,3); }
-      else{ const px0=(e.x+e.w/2+dx*.9-.7)*PX, py0=(e.y+e.h/2+dy*.9-.7)*PX;
-        cx2.fillStyle='#2b2b2b'; cx2.fillRect(px0,py0,PX*1.4,PX*1.4);
-        cx2.fillStyle='rgba(255,255,255,.85)'; cx2.fillRect(px0,py0,PX*.55,PX*.55); }
+        cx2.fillStyle=mix(pal.C,'#000000',.4); cx2.fillRect(e.x*PX,(e.y+e.h/2)*PX-2,e.w*PX,4); }
+      else{ const px0=(e.x+e.w/2+dx-1)*PX, py0=(e.y+e.h/2+dy-1)*PX;
+        cx2.fillStyle='#2b2b2b'; cx2.fillRect(px0,py0,PX*2,PX*2);
+        cx2.fillStyle='rgba(255,255,255,.85)'; cx2.fillRect(px0,py0,PX*.8,PX*.8); }
     });
     cx2.restore();
     requestAnimationFrame(frame);
