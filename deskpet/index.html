@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>DeskPet · a pixel cat for your desktop</title>
-<meta name="description" content="A tiny pixel cat that lives on your desktop: watches your cursor, taps along as you type, nudges you to stretch and sip water, runs Pomodoro, and cheers when your AI coding agent finishes." />
+<meta name="description" content="A tiny pixel cat that lives on your desktop: watches your cursor, taps along as you type, nudges you to stretch and sip water, reminds you about anything you schedule, runs Pomodoro, and cheers when your AI coding agent finishes." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&family=Silkscreen&display=swap" rel="stylesheet">
@@ -136,6 +136,7 @@
   .card:nth-child(3) .ic{background:var(--coral)} .card:nth-child(4) .ic{background:var(--mint)}
   .card:nth-child(5) .ic{background:var(--butter)} .card:nth-child(6) .ic{background:#ffd9b3}
   .card:nth-child(7) .ic{background:#d9c6ff}
+  .card:nth-child(8) .ic{background:#ffe9a8}
   .card h3{font-family:"Fredoka",sans-serif; font-weight:600; font-size:19px; margin:0 0 6px}
   .card p{margin:0; font-size:15px; color:var(--muted); font-weight:600; line-height:1.55}
 
@@ -182,7 +183,7 @@
         <span class="badge rise d1">a lil&apos; pixel buddy for your desktop</span>
         <h1 class="rise d2">A pixel cat that <br><span class="hl">lives on your desktop.</span></h1>
         <p class="sub rise d3">Watches your cursor, taps along while you type, nudges you to stretch &amp; sip water,
-          runs Pomodoro, and hops when your AI agent finishes. 🐾</p>
+          delivers your reminders, runs Pomodoro, and hops when your AI agent finishes. 🐾</p>
         <p class="ver rise d3" id="ver">checking latest release…</p>
         <div class="keys rise d4" id="get">
           <a class="key" id="dl-arm" href="#">
@@ -229,8 +230,9 @@
         <div class="card"><div class="ic">✅</div><h3>Cheers your AI agent</h3><p>Hops with "task done" when Cursor, Claude Code or Antigravity finishes. One-click connect from Settings.</p></div>
         <div class="card"><div class="ic">🧘</div><h3>Stretch &amp; water nudges</h3><p>Walks to the center of your screen, stretches tall or laps from a bowl, then trots back home.</p></div>
         <div class="card"><div class="ic">🍅</div><h3>Pomodoro on its head</h3><p>Start from the menubar and a live countdown floats above it. Tomato for focus, coffee for breaks.</p></div>
+        <div class="card"><div class="ic">⏰</div><h3>Reminds you of anything</h3><p>Set a note for a date &amp; time and the cat walks over and holds it up until you've seen it. Drag the cat to say "got it" and clear it.</p></div>
         <div class="card"><div class="ic">📌</div><h3>Stay where you put it</h3><p>Double-click to pin it in place. It remembers across restarts, and still shows up for reminders.</p></div>
-        <div class="card"><div class="ic">🎨</div><h3>Make it yours</h3><p>Pick the coat color and markings: tabby, tuxedo, calico, mittens. Size it to taste.</p></div>
+        <div class="card"><div class="ic">🎨</div><h3>Make it yours</h3><p>Pick the coat color and markings: tabby, tuxedo, calico, mittens. Size it to taste. Triple-click the cat to open Settings.</p></div>
       </div>
     </section>
 
@@ -244,7 +246,7 @@
           <br><span class="muted">…then double-click. (Or right-click → Open if you only see "unidentified developer".)</span></div></div>
         <div class="step"><div class="num">3</div><div class="t">Lives in the <b>menubar</b> 🐾. For typing reactions: System Settings → Privacy &amp; Security → <b>Accessibility</b> → enable DeskPet → relaunch.</div></div>
         <div class="step"><div class="num">⊞</div><div class="t"><b>Windows:</b> run the <b>.exe</b> installer. If SmartScreen warns, click <b>More info → Run anyway</b>. Typing reactions work with no extra permission. Lives in the system tray 🐾.</div></div>
-        <div class="step"><div class="num">4</div><div class="t">Open <b>Settings</b> from the tray to pick colors, set reminder timers, and one-click connect your AI IDEs.</div></div>
+        <div class="step"><div class="num">4</div><div class="t">Open <b>Settings</b> from the tray (or triple-click the cat) to pick colors, schedule reminders, set break timers, and one-click connect your AI IDEs.</div></div>
       </div>
     </section>
 
@@ -279,7 +281,7 @@
     }).catch(fallback);
 
   // ---------- ticker ----------
-  const PHRASES=['eye-follow 👀','tap tap ⌨️','stretch break 🧘','drink water 💧','pomodoro 🍅','task done ✅','purr 💕','stay 📌','recolor 🎨','mochi drag 🐱'];
+  const PHRASES=['eye-follow 👀','tap tap ⌨️','stretch break 🧘','drink water 💧','reminders ⏰','pomodoro 🍅','task done ✅','purr 💕','stay 📌','recolor 🎨','mochi drag 🐱'];
   document.getElementById('tk').innerHTML=(PHRASES.concat(PHRASES)).map(p=>`<span>${p}</span>`).join('·');
 
   // ---------- scroll reveal ----------
@@ -328,7 +330,7 @@
   function say(t,ms=2200){ sp.textContent=t; sp.style.display='block';
     sp.style.animation='none'; void sp.offsetWidth; sp.style.animation='pop .35s ease';
     clearTimeout(sayTimer); sayTimer=setTimeout(()=>{sp.style.display='none';},ms); }
-  const IDLE_LINES=['✅ task done!','🧘 stretch!','💧 drink water','🍅 24:59','purr~ 💕','📌 staying put'];
+  const IDLE_LINES=['✅ task done!','🧘 stretch!','💧 drink water','⏰ standup at 10!','🍅 24:59','purr~ 💕','📌 staying put'];
   let idleIdx=0;
   setInterval(()=>{ if(sp.style.display==='none'){ say(IDLE_LINES[idleIdx++%IDLE_LINES.length],2000); } },4200);
 
