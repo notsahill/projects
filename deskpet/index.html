@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>DeskPet — a pixel cat for your desktop</title>
-<meta name="description" content="A tiny pixel cat that lives on your Desktop: watches your cursor, taps along as you type, nudges you to stretch & sip water, runs Pomodoro, and cheers when your AI coding agent finishes." />
+<title>DeskPet · a pixel cat for your desktop</title>
+<meta name="description" content="A tiny pixel cat that lives on your desktop: watches your cursor, taps along as you type, nudges you to stretch and sip water, runs Pomodoro, and cheers when your AI coding agent finishes." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&family=Silkscreen&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cream:#fff5e6; --cream2:#ffe6c0; --paper:#fffaf1;
+    --cream:#fff5e6; --cream2:#ffdfae; --paper:#fffaf1;
     --ink:#3b2f27; --muted:#9a8775;
     --coral:#ff7a59; --coral-d:#e85f3d;
     --mint:#8ad6bf; --sky:#bfe2ff; --pink:#ffc6d6; --butter:#ffd76b;
-    --key:#fffdf6; --key-edge:#e4d8bf; --key-shadow:#c9bb9c;
+    --key:#fffdf6; --key-shadow:#c9bb9c;
     --line:#efe2cc;
   }
   *{box-sizing:border-box}
@@ -23,91 +23,124 @@
     margin:0; color:var(--ink);
     font-family:"Nunito",sans-serif; font-weight:600;
     background:
-      radial-gradient(1100px 500px at 80% -10%, #fff 0%, transparent 60%),
-      radial-gradient(900px 600px at -10% 20%, #ffeede 0%, transparent 55%),
-      linear-gradient(165deg, var(--cream), var(--cream2));
+      radial-gradient(1200px 520px at 85% -12%, #fffdf6 0%, transparent 55%),
+      radial-gradient(1000px 640px at -12% 18%, #ffeedd 0%, transparent 55%),
+      radial-gradient(800px 500px at 50% 110%, #ffd9a3 0%, transparent 60%),
+      linear-gradient(168deg, var(--cream) 0%, var(--cream2) 100%);
     background-attachment:fixed;
     overflow-x:hidden;
   }
-  /* subtle grain */
   body::before{
-    content:""; position:fixed; inset:0; pointer-events:none; z-index:9; opacity:.05;
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:50; opacity:.05;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
-  /* floating pixel confetti */
-  .floaty{position:fixed; z-index:0; image-rendering:pixelated; opacity:.5; animation:drift 14s ease-in-out infinite}
-  @keyframes drift{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-26px) rotate(8deg)}}
 
-  .wrap{max-width:1000px; margin:0 auto; padding:0 22px; position:relative; z-index:1}
+  /* drifting pixel clouds */
+  .cloud{position:fixed; z-index:0; opacity:.65; pointer-events:none}
+  .cloud i{position:absolute; background:#fff; border-radius:6px}
+  .c1{top:90px; left:-140px; animation:fly 70s linear infinite}
+  .c2{top:300px; left:-220px; animation:fly 95s linear infinite; animation-delay:-40s; transform:scale(.7)}
+  .c3{top:560px; left:-180px; animation:fly 110s linear infinite; animation-delay:-70s; transform:scale(1.2); opacity:.4}
+  @keyframes fly{to{transform:translateX(calc(100vw + 420px))}}
+  .cloud i:nth-child(1){width:90px;height:26px;top:14px;left:0}
+  .cloud i:nth-child(2){width:48px;height:24px;top:0;left:18px}
+  .cloud i:nth-child(3){width:30px;height:18px;top:6px;left:62px}
+
+  .wrap{max-width:1020px; margin:0 auto; padding:0 22px; position:relative; z-index:1}
 
   /* nav */
   nav{display:flex; align-items:center; justify-content:space-between; padding:22px 0}
   .brand{display:flex; align-items:center; gap:10px; font-family:"Fredoka",sans-serif; font-weight:700; font-size:20px}
   .brand .logo{width:34px; height:34px; image-rendering:pixelated; border-radius:9px; box-shadow:0 3px 0 var(--key-shadow)}
-  nav a.gh{font-family:"Silkscreen",monospace; font-size:11px; text-decoration:none; color:var(--ink);
+  nav .navlink{font-family:"Silkscreen",monospace; font-size:11px; text-decoration:none; color:var(--ink);
     background:var(--paper); border:2px solid var(--ink); border-radius:10px; padding:8px 12px; box-shadow:3px 3px 0 var(--ink); transition:.12s}
-  nav a.gh:hover{transform:translate(1px,1px); box-shadow:2px 2px 0 var(--ink)}
+  nav .navlink:hover{transform:translate(1px,1px); box-shadow:2px 2px 0 var(--ink)}
 
   /* hero */
-  .hero{text-align:center; padding:30px 0 18px}
+  .hero{display:grid; grid-template-columns:1.05fr .95fr; gap:30px; align-items:center; padding:34px 0 30px}
+  @media (max-width:840px){ .hero{grid-template-columns:1fr; text-align:center} .stagewrap{order:-1} }
   .badge{font-family:"Silkscreen",monospace; font-size:11px; color:var(--coral-d);
-    background:#fff; border:2px dashed var(--coral); border-radius:999px; padding:6px 14px; display:inline-block; margin-bottom:22px}
-  .stage{position:relative; width:230px; height:230px; margin:6px auto 4px}
-  .cat{width:184px; height:184px; image-rendering:pixelated; position:absolute; left:50%; bottom:18px; transform:translateX(-50%);
-    border-radius:38px; box-shadow:0 18px 0 -6px rgba(180,150,110,.25), 0 26px 40px rgba(150,110,70,.28);
-    animation:bob 2.6s ease-in-out infinite}
-  @keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-12px)}}
-  .shadow{position:absolute; left:50%; bottom:8px; width:150px; height:22px; transform:translateX(-50%);
-    background:rgba(150,110,70,.22); border-radius:50%; filter:blur(5px); animation:sh 2.6s ease-in-out infinite}
-  @keyframes sh{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(.82); opacity:.7}}
-  .speech{position:absolute; top:-6px; left:calc(50% + 60px); transform:translateX(-50%);
-    background:#fff; border:2px solid var(--ink); border-radius:14px; padding:7px 12px; font-weight:800; font-size:14px;
-    white-space:nowrap; box-shadow:3px 3px 0 var(--ink); animation:pop .35s ease}
-  .speech::after{content:""; position:absolute; left:24px; bottom:-9px; width:12px; height:12px; background:#fff;
-    border-right:2px solid var(--ink); border-bottom:2px solid var(--ink); transform:rotate(45deg)}
-  @keyframes pop{0%{transform:translateX(-50%) scale(.6); opacity:0}60%{transform:translateX(-50%) scale(1.08)}100%{transform:translateX(-50%) scale(1); opacity:1}}
-
-  h1{font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(38px,7vw,68px); line-height:1.02;
-    margin:14px 0 10px; letter-spacing:-.01em}
+    background:#fff; border:2px dashed var(--coral); border-radius:999px; padding:6px 14px; display:inline-block; margin-bottom:18px}
+  h1{font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(40px,6.4vw,66px); line-height:1.02; margin:0 0 14px; letter-spacing:-.01em}
   h1 .hl{color:var(--coral); position:relative; white-space:nowrap}
-  h1 .hl::after{content:""; position:absolute; left:0; right:0; bottom:6px; height:12px; background:var(--butter); z-index:-1; border-radius:4px; transform:rotate(-1deg)}
-  .sub{font-size:clamp(16px,2.4vw,20px); color:var(--muted); font-weight:700; max-width:560px; margin:0 auto 8px}
-  .ver{font-family:"Silkscreen",monospace; font-size:11px; color:var(--muted); margin:14px 0 26px}
+  h1 .hl::after{content:""; position:absolute; left:0; right:0; bottom:6px; height:13px; background:var(--butter); z-index:-1; border-radius:4px; transform:rotate(-1deg)}
+  .sub{font-size:clamp(16px,2.2vw,19px); color:var(--muted); font-weight:700; max-width:480px; margin:0 0 18px}
+  @media (max-width:840px){ .sub{margin:0 auto 18px} }
+  .ver{font-family:"Silkscreen",monospace; font-size:11px; color:var(--muted); margin:0 0 18px}
 
-  /* download = keycaps the cat taps */
-  .keys{display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-bottom:10px}
-  a.key{position:relative; text-decoration:none; min-width:210px; padding:16px 22px 20px;
+  /* live pet stage */
+  .stagewrap{display:flex; flex-direction:column; align-items:center; gap:14px}
+  .stage{position:relative; width:300px; height:300px}
+  .stage .frame{position:absolute; inset:0; background:var(--paper); border:3px solid var(--ink);
+    border-radius:26px; box-shadow:8px 10px 0 var(--ink); overflow:hidden}
+  .stage .bar{position:absolute; top:0; left:0; right:0; height:34px; background:var(--butter);
+    border-bottom:3px solid var(--ink); display:flex; align-items:center; gap:7px; padding:0 14px}
+  .stage .dot{width:11px; height:11px; border-radius:50%; border:2px solid var(--ink)}
+  .stage .dot.r{background:var(--coral)} .stage .dot.y{background:var(--butter)} .stage .dot.g{background:var(--mint)}
+  .stage .bartitle{font-family:"Silkscreen",monospace; font-size:9px; margin-left:6px; color:var(--ink); opacity:.75}
+  #petCanvas{position:absolute; left:50%; bottom:26px; transform:translateX(-50%); image-rendering:pixelated; cursor:pointer}
+  .floorline{position:absolute; left:18px; right:18px; bottom:22px; height:3px; background:var(--line); border-radius:3px}
+  .speech{position:absolute; top:44px; left:50%; transform:translateX(-50%);
+    background:#fff; border:2px solid var(--ink); border-radius:13px; padding:6px 12px; font-weight:800; font-size:13.5px;
+    white-space:nowrap; box-shadow:3px 3px 0 var(--ink); animation:pop .35s ease; z-index:2}
+  .speech::after{content:""; position:absolute; left:50%; margin-left:-6px; bottom:-8px; width:11px; height:11px; background:#fff;
+    border-right:2px solid var(--ink); border-bottom:2px solid var(--ink); transform:rotate(45deg)}
+  @keyframes pop{0%{transform:translateX(-50%) scale(.6); opacity:0}60%{transform:translateX(-50%) scale(1.08)}100%{transform:translateX(-50%) scale(1)}}
+  .hint{font-family:"Silkscreen",monospace; font-size:10px; color:var(--muted)}
+  .swatches{display:flex; gap:10px}
+  .sw{width:30px; height:30px; border-radius:50%; border:2.5px solid var(--ink); cursor:pointer;
+    box-shadow:2px 2px 0 var(--ink); transition:.12s}
+  .sw:hover{transform:translateY(-3px)}
+  .sw.on{outline:3px solid var(--coral); outline-offset:2px}
+
+  /* download keycaps */
+  .keys{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:8px}
+  @media (max-width:840px){ .keys{justify-content:center} }
+  a.key{position:relative; text-decoration:none; min-width:186px; padding:14px 20px 18px;
     background:var(--key); border:3px solid var(--ink); border-radius:16px;
     box-shadow:0 7px 0 var(--key-shadow), 0 9px 0 var(--ink); transition:.1s; text-align:left}
   a.key:hover{transform:translateY(3px); box-shadow:0 4px 0 var(--key-shadow),0 6px 0 var(--ink)}
   a.key:active{transform:translateY(7px); box-shadow:0 0 0 var(--key-shadow),0 1px 0 var(--ink)}
-  a.key .k{display:block; font-family:"Fredoka",sans-serif; font-weight:700; font-size:19px; color:var(--ink)}
-  a.key .s{display:block; font-size:13px; color:var(--muted); font-weight:700; margin-top:2px}
+  a.key .k{display:block; font-family:"Fredoka",sans-serif; font-weight:700; font-size:18px; color:var(--ink)}
+  a.key .s{display:block; font-size:12.5px; color:var(--muted); font-weight:700; margin-top:2px}
   a.key .chip{position:absolute; top:-12px; right:14px; font-family:"Silkscreen",monospace; font-size:9px; color:#fff;
     background:var(--coral); border:2px solid var(--ink); border-radius:8px; padding:3px 7px; box-shadow:2px 2px 0 var(--ink)}
   a.key.intel{background:#f4ecdb}
   a.key.win{background:#e4f1ff}
-  .free{font-family:"Silkscreen",monospace; font-size:11px; color:var(--mint); filter:saturate(1.4) brightness(.7); margin-top:14px}
+  .free{font-family:"Silkscreen",monospace; font-size:10.5px; color:#5fae97; margin-top:10px}
   .free b{color:var(--coral-d)}
 
+  /* ticker */
+  .ticker{margin:36px 0 0; border-top:3px solid var(--ink); border-bottom:3px solid var(--ink);
+    background:var(--butter); overflow:hidden; white-space:nowrap; transform:rotate(-1deg) scale(1.02)}
+  .ticker .tk{display:inline-block; padding:10px 0; font-family:"Silkscreen",monospace; font-size:12px;
+    animation:tick 28s linear infinite}
+  .ticker span{margin:0 26px}
+  @keyframes tick{to{transform:translateX(-50%)}}
+
   /* features */
-  section{padding:54px 0}
+  section{padding:64px 0 20px}
   .eyebrow{font-family:"Silkscreen",monospace; font-size:11px; color:var(--coral-d); text-align:center; margin-bottom:8px; letter-spacing:.04em}
-  h2{font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(26px,4vw,40px); text-align:center; margin:0 0 34px}
-  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px}
-  .card{background:var(--paper); border:3px solid var(--ink); border-radius:18px; padding:22px;
-    box-shadow:5px 6px 0 var(--ink); transition:.14s}
-  .card:nth-child(2n){transform:rotate(-1deg)} .card:nth-child(3n){transform:rotate(1deg)}
-  .card:hover{transform:translateY(-5px) rotate(0); box-shadow:7px 9px 0 var(--ink)}
-  .card .ic{width:54px; height:54px; display:grid; place-items:center; font-size:28px; border-radius:14px; border:2.5px solid var(--ink); margin-bottom:14px; box-shadow:3px 3px 0 var(--ink)}
+  h2{font-family:"Fredoka",sans-serif; font-weight:700; font-size:clamp(26px,4vw,40px); text-align:center; margin:0 0 38px}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px}
+  .card{background:var(--paper); border:3px solid var(--ink); border-radius:18px; padding:24px;
+    box-shadow:5px 6px 0 var(--ink); transition:transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .2s, opacity .5s;
+    opacity:0; transform:translateY(26px)}
+  .card.in{opacity:1; transform:translateY(0)}
+  .card.in:nth-child(2n){transform:rotate(-1deg)} .card.in:nth-child(3n){transform:rotate(1deg)}
+  .card:hover{transform:translateY(-6px) rotate(0)!important; box-shadow:8px 11px 0 var(--ink)}
+  .card .ic{width:56px; height:56px; display:grid; place-items:center; font-size:28px; border-radius:15px;
+    border:2.5px solid var(--ink); margin-bottom:14px; box-shadow:3px 3px 0 var(--ink); transition:.25s}
+  .card:hover .ic{transform:rotate(-8deg) scale(1.12)}
   .card:nth-child(1) .ic{background:var(--sky)} .card:nth-child(2) .ic{background:var(--pink)}
-  .card:nth-child(3) .ic{background:var(--mint)} .card:nth-child(4) .ic{background:var(--butter)}
-  .card:nth-child(5) .ic{background:var(--coral)} .card:nth-child(6) .ic{background:#d9c6ff}
+  .card:nth-child(3) .ic{background:var(--coral)} .card:nth-child(4) .ic{background:var(--mint)}
+  .card:nth-child(5) .ic{background:var(--butter)} .card:nth-child(6) .ic{background:#ffd9b3}
+  .card:nth-child(7) .ic{background:#d9c6ff}
   .card h3{font-family:"Fredoka",sans-serif; font-weight:600; font-size:19px; margin:0 0 6px}
-  .card p{margin:0; font-size:15px; color:var(--muted); font-weight:600; line-height:1.5}
+  .card p{margin:0; font-size:15px; color:var(--muted); font-weight:600; line-height:1.55}
 
   /* install */
-  .install{max-width:720px; margin:0 auto; background:var(--paper); border:3px solid var(--ink); border-radius:22px;
+  .install{max-width:740px; margin:0 auto; background:var(--paper); border:3px solid var(--ink); border-radius:22px;
     box-shadow:7px 9px 0 var(--ink); padding:30px 30px 26px}
   .step{display:flex; gap:16px; align-items:flex-start; padding:14px 0; border-bottom:2px dashed var(--line)}
   .step:last-child{border-bottom:0}
@@ -119,86 +152,104 @@
     border-radius:10px; display:inline-block; margin-top:8px; overflow-x:auto; max-width:100%}
   .muted{color:var(--muted); font-weight:600; font-size:13px}
 
-  footer{text-align:center; padding:46px 0 64px; color:var(--muted); font-weight:700; font-size:13px}
+  /* footer */
+  footer{text-align:center; padding:56px 0 70px; color:var(--muted); font-weight:700; font-size:13px}
   footer a{color:var(--coral-d)}
-  .paws{font-size:18px; letter-spacing:6px; margin-bottom:10px}
+  .paws{font-size:18px; letter-spacing:10px; margin-bottom:12px}
+  .paws span{display:inline-block; animation:pawstep 2.4s ease-in-out infinite}
+  .paws span:nth-child(2){animation-delay:.3s} .paws span:nth-child(3){animation-delay:.6s}
+  @keyframes pawstep{0%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
 
-  /* load-in */
   .rise{opacity:0; transform:translateY(16px); animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
   @keyframes rise{to{opacity:1; transform:none}}
   .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.25s}.d4{animation-delay:.35s}.d5{animation-delay:.45s}
-  @media (max-width:560px){ a.key{min-width:0; width:100%} }
+  @media (max-width:560px){ a.key{min-width:0; width:100%} .stage{width:260px;height:260px} }
 </style>
 </head>
 <body>
-  <img class="floaty" src="icon.png" style="width:38px;top:140px;left:6%" alt="">
-  <img class="floaty" src="icon.png" style="width:26px;top:420px;right:7%;animation-delay:-4s" alt="">
-  <img class="floaty" src="icon.png" style="width:30px;top:760px;left:9%;animation-delay:-8s" alt="">
+  <div class="cloud c1"><i></i><i></i><i></i></div>
+  <div class="cloud c2"><i></i><i></i><i></i></div>
+  <div class="cloud c3"><i></i><i></i><i></i></div>
 
   <div class="wrap">
     <nav class="rise d1">
       <div class="brand"><img class="logo" src="icon.png" alt="" onerror="this.style.display='none'">DeskPet</div>
-      <!-- <a class="gh" id="ghlink" href="#" target="_blank" rel="noopener">★ GitHub</a> -->
+      <a class="navlink" href="#get">↓ download</a>
     </nav>
 
     <header class="hero">
-      <span class="badge rise d1">a lil&apos; pixel buddy for your Desktop</span>
-      <div class="stage rise d2">
-        <div class="speech" id="speech">✅ task done!</div>
-        <div class="shadow"></div>
-        <img class="cat" src="icon.png" alt="DeskPet pixel cat" onerror="this.parentNode.style.display='none'">
+      <div>
+        <span class="badge rise d1">a lil&apos; pixel buddy for your desktop</span>
+        <h1 class="rise d2">A pixel cat that <br><span class="hl">lives on your desktop.</span></h1>
+        <p class="sub rise d3">Watches your cursor, taps along while you type, nudges you to stretch &amp; sip water,
+          runs Pomodoro, and hops when your AI agent finishes. 🐾</p>
+        <p class="ver rise d3" id="ver">checking latest release…</p>
+        <div class="keys rise d4" id="get">
+          <a class="key" id="dl-arm" href="#">
+            <span class="chip">recommended</span>
+            <span class="k">↓ Apple Silicon</span>
+            <span class="s">M1 · M2 · M3 · M4 · .dmg</span>
+          </a>
+          <a class="key intel" id="dl-intel" href="#">
+            <span class="k">↓ Intel Mac</span>
+            <span class="s">older Macs · .dmg</span>
+          </a>
+          <a class="key win" id="dl-win" href="#">
+            <span class="k">↓ Windows</span>
+            <span class="s">Windows 10/11 · .exe</span>
+          </a>
+        </div>
+        <p class="free rise d5"><b>Free</b> &amp; open · unsigned build (one-time step below) · macOS 11+ · Windows 10+</p>
       </div>
-      <h1 class="rise d3">A pixel cat that <br><span class="hl">lives on your desktop.</span></h1>
-      <p class="sub rise d3">Watches your cursor, taps along while you type, reminds you to stretch &amp; sip water,
-        runs Pomodoro, and hops when your AI agent finishes. 🐾</p>
-      <p class="ver rise d4" id="ver">checking latest release…</p>
 
-      <div class="keys rise d4">
-        <a class="key" id="dl-arm" href="#">
-          <span class="chip">recommended</span>
-          <span class="k">↓ Apple Silicon</span>
-          <span class="s">M1 · M2 · M3 · M4 — .dmg</span>
-        </a>
-        <a class="key intel" id="dl-intel" href="#">
-          <span class="k">↓ Intel Mac</span>
-          <span class="s">older Macs — .dmg</span>
-        </a>
-        <a class="key win" id="dl-win" href="#">
-          <span class="k">↓ Windows</span>
-          <span class="s">Windows 10/11 — .exe</span>
-        </a>
+      <div class="stagewrap rise d2">
+        <div class="stage">
+          <div class="frame"></div>
+          <div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+            <span class="bartitle">your desktop</span></div>
+          <div class="speech" id="speech">hi! move your mouse 👀</div>
+          <div class="floorline"></div>
+          <canvas id="petCanvas" width="190" height="220"></canvas>
+        </div>
+        <div class="swatches" id="swatches"></div>
+        <p class="hint">this is the real pet · it watches your cursor · type something · click it!</p>
       </div>
-      <p class="free rise d5"><b>Free</b> &amp; open · unsigned build (one-time Gatekeeper step below) · macOS 11+ · Windows 10+</p>
     </header>
+  </div>
 
+  <div class="ticker"><div class="tk" id="tk"></div></div>
+
+  <div class="wrap">
     <section>
-      <div class="eyebrow rise">things it does</div>
-      <h2 class="rise">small cat, big personality</h2>
-      <div class="grid">
-        <div class="card"><div class="ic">👀</div><h3>Follows your cursor</h3><p>Its eyes track your mouse. Flick fast and it scampers after the pointer.</p></div>
-        <div class="card"><div class="ic">⌨️</div><h3>Types with you</h3><p>Taps two little keys as you type. Go too fast and it overheats — steam and all.</p></div>
-        <div class="card"><div class="ic">🧘</div><h3>Stretch &amp; water Reminder</h3><p>Walks to center, does a stretch or laps from a bowl, then trots back. Gentle nudges.</p></div>
-        <div class="card"><div class="ic">🍅</div><h3>Pomodoro</h3><p>A live countdown floats over its head while you focus. Tomato for work, coffee for breaks.</p></div>
-        <div class="card"><div class="ic">✅</div><h3>Cheers your AI agent</h3><p>Jumps with “task done” when Cursor, Claude Code or Antigravity finishes a response.</p></div>
-        <div class="card"><div class="ic">🎨</div><h3>Make it yours</h3><p>Pick the coat color and markings — tabby, tuxedo, calico, mittens. Pin it in place too.</p></div>
+      <div class="eyebrow">things it does</div>
+      <h2>small cat, big personality</h2>
+      <div class="grid" id="grid">
+        <div class="card"><div class="ic">👀</div><h3>Alive on your desktop</h3><p>Eyes track your mouse, flick fast and it gives chase. Pet its head for purrs, drag it around, shake for a wiggle.</p></div>
+        <div class="card"><div class="ic">⌨️</div><h3>Types with you</h3><p>Taps two little keys as you type. Go too fast and it overheats, steam and all.</p></div>
+        <div class="card"><div class="ic">✅</div><h3>Cheers your AI agent</h3><p>Hops with "task done" when Cursor, Claude Code or Antigravity finishes. One-click connect from Settings.</p></div>
+        <div class="card"><div class="ic">🧘</div><h3>Stretch &amp; water nudges</h3><p>Walks to the center of your screen, stretches tall or laps from a bowl, then trots back home.</p></div>
+        <div class="card"><div class="ic">🍅</div><h3>Pomodoro on its head</h3><p>Start from the menubar and a live countdown floats above it. Tomato for focus, coffee for breaks.</p></div>
+        <div class="card"><div class="ic">📌</div><h3>Stay where you put it</h3><p>Double-click to pin it in place. It remembers across restarts, and still shows up for reminders.</p></div>
+        <div class="card"><div class="ic">🎨</div><h3>Make it yours</h3><p>Pick the coat color and markings: tabby, tuxedo, calico, mittens. Size it to taste.</p></div>
       </div>
     </section>
 
     <section>
-      <div class="eyebrow rise">two minutes</div>
-      <h2 class="rise">getting it home</h2>
-      <div class="install rise">
+      <div class="eyebrow">two minutes</div>
+      <h2>getting it home</h2>
+      <div class="install">
         <div class="step"><div class="num">1</div><div class="t">Open the <b>.dmg</b> and drag <b>DeskPet</b> into <b>Applications</b>.</div></div>
-        <div class="step"><div class="num">2</div><div class="t">Unsigned build — clear the quarantine flag once in <b>Terminal</b>:
+        <div class="step"><div class="num">2</div><div class="t">Unsigned build, so clear the quarantine flag once in <b>Terminal</b>:
           <br><code>xattr -dr com.apple.quarantine /Applications/DeskPet.app</code>
-          <br><span class="muted">…then double-click. (Or right-click → Open if you only see “unidentified developer”.)</span></div></div>
+          <br><span class="muted">…then double-click. (Or right-click → Open if you only see "unidentified developer".)</span></div></div>
         <div class="step"><div class="num">3</div><div class="t">Lives in the <b>menubar</b> 🐾. For typing reactions: System Settings → Privacy &amp; Security → <b>Accessibility</b> → enable DeskPet → relaunch.</div></div>
         <div class="step"><div class="num">⊞</div><div class="t"><b>Windows:</b> run the <b>.exe</b> installer. If SmartScreen warns, click <b>More info → Run anyway</b>. Typing reactions work with no extra permission. Lives in the system tray 🐾.</div></div>
+        <div class="step"><div class="num">4</div><div class="t">Open <b>Settings</b> from the tray to pick colors, set reminder timers, and one-click connect your AI IDEs.</div></div>
       </div>
     </section>
 
     <footer>
-      <div class="paws">🐾 🐾 🐾</div>
+      <div class="paws"><span>🐾</span><span>🐾</span><span>🐾</span></div>
       made with love for distractible developers ·
       not affiliated with Apple · inspired by the desktop-pet classics
       <br><br>
@@ -207,15 +258,9 @@
   </div>
 
 <script>
+  // ---------- release downloads ----------
   const OWNER='notsahill', REPO='projects';
   const relUrl=`https://github.com/${OWNER}/${REPO}/releases`;
-
-  // cycling speech bubble
-  const lines=['✅ task done!','🧘 stretch!','💧 drink water','🍅 24:59','purr~ 💕','⌨️ tap tap'];
-  let li=0; const sp=document.getElementById('speech');
-  setInterval(()=>{ li=(li+1)%lines.length; sp.textContent=lines[li];
-    sp.style.animation='none'; void sp.offsetWidth; sp.style.animation='pop .35s ease'; }, 2400);
-
   function fallback(){
     document.getElementById('ver').textContent='latest release';
     ['dl-arm','dl-intel','dl-win'].forEach(id=>{const e=document.getElementById(id); if(e)e.href=relUrl+'/latest';});
@@ -232,6 +277,95 @@
       const set=(id,a)=>{const el=document.getElementById(id); if(!el)return; if(a){el.href=a.browser_download_url;} else {el.style.opacity=.45; el.removeAttribute('href');}};
       set('dl-arm',arm); set('dl-intel',intel); set('dl-win',win);
     }).catch(fallback);
+
+  // ---------- ticker ----------
+  const PHRASES=['eye-follow 👀','tap tap ⌨️','stretch break 🧘','drink water 💧','pomodoro 🍅','task done ✅','purr 💕','stay 📌','recolor 🎨','mochi drag 🐱'];
+  document.getElementById('tk').innerHTML=(PHRASES.concat(PHRASES)).map(p=>`<span>${p}</span>`).join('·');
+
+  // ---------- scroll reveal ----------
+  const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('in'); io.unobserve(e.target);} }),{threshold:.15});
+  document.querySelectorAll('.card').forEach(c=>io.observe(c));
+
+  // ---------- THE LIVE PET (real sprite from the app) ----------
+  // zone chars: C coat · S stripe · F face · G paws · W belly · B outline · E eye · N nose · R inner-ear
+  const BODY=[
+    '.....BB......BB....','....BCCB....BCCB...','....BCRB....BCRB...','...BCCCBBBBBBCCCB..',
+    '..BCCCCCCCCCCCCCCB.','.BCCCCCCCCCCCCCCCCB','.BCCCCCCCCCCCCCCCCB','.BCCCCCCCCCCCCCCCCB',
+    '.BCCEECCCCCCCEECCB.','BBCCEECCCCCCCEECCBB','.BCCCCCCNNCCCCCCCB.','BBCCCCCBNNBCCCCCCBB',
+    '.BCCCCCCCCCCCCCCCB.','..BCCCCCCCCCCCCCB..','..BBCCCCCCCCCCBB...','...BCCWWWWWWCCB....',
+    '..BCCWWWWWWWWCCB...','..BCSWWWWWWWWSCB...','..BCSWWWWWWWWSCB...','..BCCWWWWWWWWCCB...'
+  ];
+  const BODY_B=BODY.slice(); BODY_B[0]='.....BB......B.....'; // ear twitch
+  const PAW_BOTH=['...BGGB..BGGB.....','....BB....BB......'];
+  const PAW_LU=['...BGGB...........','.........BGGB.....'];
+  const PAW_RU=['.........BGGB.....','...BGGB...........'];
+  const FRAMES={ idle:[BODY.concat(PAW_BOTH),BODY_B.concat(PAW_BOTH)], type:[BODY.concat(PAW_LU),BODY.concat(PAW_RU)] };
+  const EYES=[{x:4,y:8,w:2,h:2},{x:13,y:8,w:2,h:2}];
+
+  const mix=(a,b,t)=>{const h=x=>parseInt(x,16);const A=[h(a.slice(1,3)),h(a.slice(3,5)),h(a.slice(5,7))],B=[h(b.slice(1,3)),h(b.slice(3,5)),h(b.slice(5,7))];
+    return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('');};
+  function palette(coat){
+    return {'.':null,B:'#3a302c',C:coat,S:mix(coat,'#000000',.3),F:coat,G:coat,W:mix(coat,'#ffffff',.62),E:'#fffefb',N:'#d98aa0',R:'#e7a6b4'};
+  }
+  const COLORS=['#e0a060','#2f261d','#9a9aa2','#d9c8a8','#c96f4a'];
+  let coat=COLORS[0], pal=palette(coat);
+
+  // swatches
+  const swBox=document.getElementById('swatches');
+  COLORS.forEach((c,i)=>{ const d=document.createElement('div'); d.className='sw'+(i===0?' on':''); d.style.background=c;
+    d.onclick=()=>{ coat=c; pal=palette(c); document.querySelectorAll('.sw').forEach(s=>s.classList.remove('on')); d.classList.add('on'); say('ooh, new look! 🎨'); };
+    swBox.appendChild(d); });
+
+  const cv=document.getElementById('petCanvas'), cx2=cv.getContext('2d');
+  const PX=10, GW=19, GH=22;
+  cv.width=GW*PX; cv.height=GH*PX;
+  let mouse={x:innerWidth/2,y:innerHeight/2};
+  addEventListener('mousemove',e=>{mouse={x:e.clientX,y:e.clientY};});
+
+  // speech
+  const sp=document.getElementById('speech');
+  let sayTimer=null;
+  function say(t,ms=2200){ sp.textContent=t; sp.style.display='block';
+    sp.style.animation='none'; void sp.offsetWidth; sp.style.animation='pop .35s ease';
+    clearTimeout(sayTimer); sayTimer=setTimeout(()=>{sp.style.display='none';},ms); }
+  const IDLE_LINES=['✅ task done!','🧘 stretch!','💧 drink water','🍅 24:59','purr~ 💕','📌 staying put'];
+  let idleIdx=0;
+  setInterval(()=>{ if(sp.style.display==='none'){ say(IDLE_LINES[idleIdx++%IDLE_LINES.length],2000); } },4200);
+
+  // reactions
+  let typeUntil=0, hopUntil=0, blinkUntil=0, nextBlink=performance.now()+2200;
+  addEventListener('keydown',()=>{ typeUntil=performance.now()+900; if(Math.random()<.3) say('tap tap ⌨️',1200); });
+  cv.addEventListener('click',()=>{ hopUntil=performance.now()+1500; say('✅ task done!',1500); });
+
+  function frame(now){
+    if(now>nextBlink){ blinkUntil=now+140; nextBlink=now+2200+Math.random()*3800; }
+    const typing=now<typeUntil, hopping=now<hopUntil;
+    const set=typing?FRAMES.type:FRAMES.idle;
+    const idx=Math.floor(now/(typing?110:450))%2;
+    const grid=set[idx];
+    const hop=hopping?Math.abs(Math.sin(now/120))*PX*2.2:0;
+    const bob=Math.sin(now/700)*2;
+    cx2.clearRect(0,0,cv.width,cv.height);
+    cx2.save(); cx2.translate(0,PX*1.5-hop+bob);
+    for(let y=0;y<grid.length;y++){ const row=grid[y];
+      for(let x=0;x<row.length;x++){ const col=pal[row[x]]; if(!col)continue;
+        cx2.fillStyle=col; cx2.fillRect(x*PX,y*PX,PX,PX); } }
+    // eyes: pupils follow the visitor's cursor
+    const r=cv.getBoundingClientRect();
+    EYES.forEach(e=>{
+      const exс=r.left+(e.x+e.w/2)*PX*(r.width/cv.width), eyc=r.top+(e.y+e.h/2)*PX*(r.height/cv.height);
+      const dx=Math.max(-1,Math.min(1,(mouse.x-exс)/160)), dy=Math.max(-1,Math.min(1,(mouse.y-eyc)/160));
+      if(now<blinkUntil){ cx2.fillStyle=pal.C; cx2.fillRect(e.x*PX,e.y*PX,e.w*PX,e.h*PX);
+        cx2.fillStyle=pal.B; cx2.fillRect(e.x*PX,(e.y+1)*PX-2,e.w*PX,3); }
+      else{ const px0=(e.x+e.w/2+dx*.9-.7)*PX, py0=(e.y+e.h/2+dy*.9-.7)*PX;
+        cx2.fillStyle='#2b2b2b'; cx2.fillRect(px0,py0,PX*1.4,PX*1.4);
+        cx2.fillStyle='rgba(255,255,255,.85)'; cx2.fillRect(px0,py0,PX*.55,PX*.55); }
+    });
+    cx2.restore();
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  setTimeout(()=>say('hi! move your mouse 👀',2600),700);
 </script>
 </body>
 </html>
